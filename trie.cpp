@@ -1,5 +1,5 @@
 #include<bits/stdc++.h>
-#define UMAP unordered_map<char,trie_node *,hasher,equalr>
+//#define UMAP unordered_map<char,trie_node<T> *,hasher,equalr>
 using namespace std;
 
 /*
@@ -38,13 +38,13 @@ class equalr
 /*
     Trie Implememtation
 */
-class trie_node
+template<class T>class trie_node
 {
     public :
-    UMAP M;
-    int id;
+    unordered_map<char,trie_node<T> *,hasher,equalr> M;
+    T id;
     int ct;
-    trie_node(int i)
+    trie_node(T i)
     {
         id = i;
         ct = 1;
@@ -57,14 +57,14 @@ class trie_node
         id = -1;
     }
 };
-class trie
+template<class T>class trie
 {
-    private:trie_node * m;
+    private:trie_node<T> * m;
     public:trie()
     {
-        m = new trie_node();
+        m = new trie_node<T>();
     }
-    private:void Insert(string &g,int id,int i,UMAP &M)
+    private:void Insert(string &g,T id,int i,unordered_map<char,trie_node<T> *,hasher,equalr> &M)
     {
         if(i == g.size()-1)
         {
@@ -76,31 +76,31 @@ class trie
                     M[g[i]]->id = id;
             }
             else
-                M[g[i]] = new trie_node(id);
+                M[g[i]] = new trie_node<T>(id);
             return;
         }
         if(M.find(g[i]) == M.end())
-            M[g[i]] = new trie_node();
+            M[g[i]] = new trie_node<T>();
         M[g[i]]->ct++;
         Insert(g,id,i+1,M[g[i]]->M);
     }
-    public:void insert(string g,int id)
+    public:void insert(string g,T id)
     {
         Insert(g,id,0,m->M);
     }
-    private:int Search(string &g,int i,UMAP &M)
+    private:T Search(string &g,int i,unordered_map<char,trie_node<T> *,hasher,equalr> &M)
     {
         if(M.find(g[i]) == M.end())
-            return -1;
+            return (T)0;
         if(i == g.size()-1)
             return M[g[i]]->id;
         return Search(g,i+1,M[g[i]]->M);
     }
-    public:int search(string g)
+    public:T search(string g)
     {
         return Search(g,0,m->M);
     }
-    private:void Remove(string &g,int i,UMAP &M)
+    private:void Remove(string &g,int i,unordered_map<char,trie_node<T> *,hasher,equalr> &M)
     {
         if(M.find(g[i]) == M.end() || i>= g.size())
             return ;
@@ -116,10 +116,10 @@ class trie
     {
         Remove(g,0,m->M);
     }
-    private :void removeall(trie_node *m)
+    private :void removeall(trie_node<T> *m)
     {
         if(m==NULL)return;
-        UMAP ::iterator it;
+        typename unordered_map<char,trie_node<T> *,hasher,equalr> ::iterator it;
         for(it = m->M.begin();it!=m->M.end();it++)
         {
             removeall((*it).second);
@@ -128,34 +128,27 @@ class trie
     }
     public:~trie()
     {
-        cout<<"1";
         removeall(m);
-        cout<<"2";
     }
 };
 void simulate()
 {
-    trie t;
-    for (int k = 0;k<1;k++)
+    trie<int> t;
+    int o;
+    for (int k = 0;k<5;k++)
     {
-        for(int i = 0;i<100000;i++)
+        for(int i = 0;i<4000000;i++)
         {
             t.insert(toString(i),i);
         }
-        for(int i = 0;i<100000;i++)
+        cin>>o;
+        for(int i = 0;i<5000000;i++)
         {
             t.remove(toString(i));
         }
+        cout<<k<<"\n";
+        cin>>o;
     }
-}
-void saveTrie(string place,trie &t)
-{
-
-}
-trie loadTrie(string place)
-{
-    trie t;
-    return t;
 }
 int main()
 {
