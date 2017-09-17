@@ -32,16 +32,9 @@ class equalr
         return k1 == k2;
     }
 };
-
-
-
-/*
-    Trie Implememtation
-*/
 template<class T>class trie_node
 {
     public :
-    //unordered_map<char,trie_node<T> *,hasher,equalr> M;
     std::map<char,trie_node<T>* >M;
     T id;
     int ct;
@@ -55,7 +48,7 @@ template<class T>class trie_node
     {
         M.clear();
         ct = 0;
-        id = -1;
+        id = (T)0;
     }
 };
 template<class T>class trie
@@ -71,7 +64,7 @@ template<class T>class trie
         {
             if(M.find(g[i]) != M.end())
             {
-                if(M[g[i]]->id != id&& M[g[i]]->id != -1)
+                if(M[g[i]]->id != id&& M[g[i]]->id != (T)0)
                     error(-1,"Name Already used");
                 else
                     M[g[i]]->id = id;
@@ -126,6 +119,40 @@ template<class T>class trie
             removeall((*it).second);
         }
         delete m;
+    }
+    private:void Peek(std::string &g,int i,trie_node<T>* m,std::vector<T>&V)
+    {
+        V.push_back(m->id);
+        typename std::map<char,trie_node<T>* > ::iterator it;
+        for(it = m->M.begin();it!=m->M.end();it++)
+        {
+            if((*it).second != NULL)
+            {
+                Peek(g,i+1,(*it).second,V);
+            }
+        }
+    }
+    public: std::vector<T> peek(std::string g)
+    {
+        std::vector<T>V;
+        trie_node <T> *M;
+        M = m;
+        bool b = 1;
+        for(int i = 0;i<g.size();i++)
+        {
+            if(M->M.find(g[i])!=M->M.end())
+            {
+                M = M->M[g[i]];
+            }
+            else
+            {
+                b = 0;
+                break;
+            }
+        }
+        if(b == true)
+            Peek(g,0,M,V);
+        return V;
     }
     public:~trie()
     {

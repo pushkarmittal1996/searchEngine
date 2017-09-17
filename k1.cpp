@@ -14,26 +14,24 @@ void simulate()
     int o;
     for (int k = 0;k<1;k++)
     {
-        for(int i = 0;i<4000000;i++)
+        for(int i = 0;i<10000;i++)
         {
             t.insert(toString(i),i);
         }
-        //cout<<k<<"\n";
-        //cin>>o;
-        for(int i = 0;i<4000000;i++)
+        double d;
+        cout<<"enter"<<endl;
+        cin>>d;
+        vector<double> V;
+        V = t.peek(toString(d));
+        for(int i = 0;i<V.size();i++)
         {
-            t.remove(toString(i));
+            cout<<V[i]<<"\n";
         }
-        //cout<<k<<"\n";
-        //cin>>o;
     }
 }
 int main()
 {
-    int t;
-    cin>>t;
     simulate();
     cout<<"okay\n";
-    cin>>t;
     return 0;
 }
