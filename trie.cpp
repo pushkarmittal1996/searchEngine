@@ -1,22 +1,22 @@
-#include<bits/stdc++.h>
-//#define UMAP unordered_map<char,trie_node<T> *,hasher,equalr>
-using namespace std;
+#ifndef trie_cpp
+#include <iostream>
+#include <iterator>
+#include <map>
+#include <vector>
+#include <set>
+#include <queue>
+#include <deque>
+#include <stack>
+#include <algorithm>
+#include <string>
+#include <sstream>
 
-/*
-    Basic Functions to do shitt
-*/
-template <typename T>string toString(T a)
+
+void error(int id = -1,std::string g = "")
 {
-    stringstream ss;
-    ss<<a;
-    string g;
-    ss>>g;
-    return g;
-}
-void error(int id = -1,string g = "")
-{
+    if(id == -1)return;
     g = "ERROR " + g;
-    cout<<g<<" "<<id<<"\n";
+    std::cout<<g<<" "<<id<<"\n";
 }
 class hasher
 {
@@ -41,7 +41,8 @@ class equalr
 template<class T>class trie_node
 {
     public :
-    unordered_map<char,trie_node<T> *,hasher,equalr> M;
+    //unordered_map<char,trie_node<T> *,hasher,equalr> M;
+    std::map<char,trie_node<T>* >M;
     T id;
     int ct;
     trie_node(T i)
@@ -64,7 +65,7 @@ template<class T>class trie
     {
         m = new trie_node<T>();
     }
-    private:void Insert(string &g,T id,int i,unordered_map<char,trie_node<T> *,hasher,equalr> &M)
+    private:void Insert(std::string &g,T id,int i,std::map<char,trie_node<T>* > &M)
     {
         if(i == g.size()-1)
         {
@@ -84,11 +85,11 @@ template<class T>class trie
         M[g[i]]->ct++;
         Insert(g,id,i+1,M[g[i]]->M);
     }
-    public:void insert(string g,T id)
+    public:void insert(std::string g,T id)
     {
         Insert(g,id,0,m->M);
     }
-    private:T Search(string &g,int i,unordered_map<char,trie_node<T> *,hasher,equalr> &M)
+    private:T Search(std::string &g,int i,std::map<char,trie_node<T>* > &M)
     {
         if(M.find(g[i]) == M.end())
             return (T)0;
@@ -96,11 +97,11 @@ template<class T>class trie
             return M[g[i]]->id;
         return Search(g,i+1,M[g[i]]->M);
     }
-    public:T search(string g)
+    public:T search(std::string g)
     {
         return Search(g,0,m->M);
     }
-    private:void Remove(string &g,int i,unordered_map<char,trie_node<T> *,hasher,equalr> &M)
+    private:void Remove(std::string &g,int i,std::map<char,trie_node<T>* > &M)
     {
         if(M.find(g[i]) == M.end() || i>= g.size())
             return ;
@@ -112,14 +113,14 @@ template<class T>class trie
             M.erase(g[i]);
         }
     }
-    public:void remove(string g)
+    public:void remove(std::string g)
     {
         Remove(g,0,m->M);
     }
     private :void removeall(trie_node<T> *m)
     {
         if(m==NULL)return;
-        typename unordered_map<char,trie_node<T> *,hasher,equalr> ::iterator it;
+        typename std::map<char,trie_node<T>* > ::iterator it;
         for(it = m->M.begin();it!=m->M.end();it++)
         {
             removeall((*it).second);
@@ -131,28 +132,5 @@ template<class T>class trie
         removeall(m);
     }
 };
-void simulate()
-{
-    trie<int> t;
-    int o;
-    for (int k = 0;k<5;k++)
-    {
-        for(int i = 0;i<4000000;i++)
-        {
-            t.insert(toString(i),i);
-        }
-        cin>>o;
-        for(int i = 0;i<5000000;i++)
-        {
-            t.remove(toString(i));
-        }
-        cout<<k<<"\n";
-        cin>>o;
-    }
-}
-int main()
-{
-    simulate();
-    return 0;
-}
+#endif
 
