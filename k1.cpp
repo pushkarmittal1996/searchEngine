@@ -1,37 +1,46 @@
+// mach1.cpp : Defines the entry point for the console application.
+//
 #include "trie.cpp"
+//#define _CRTDBG_MAP_ALLOC
+//#include <stdlib.h>
+//#include <crtdbg.h>
+
+//#include <omp.h>
+
 using namespace std;
 template <typename T>string toString(T a)
 {
-    stringstream ss;
-    ss<<a;
-    string g;
-    ss>>g;
-    return g;
+	stringstream ss;
+	ss << a;
+	string g;
+	ss >> g;
+	return g;
 }
 void simulate()
 {
-    trie<double> t;
-    int o;
-    for (int k = 0;k<1;k++)
-    {
-        for(int i = 0;i<10000;i++)
-        {
-            t.insert(toString(i),i);
-        }
-        double d;
-        cout<<"enter"<<endl;
-        cin>>d;
-        vector<double> V;
-        V = t.peek(toString(d));
-        for(int i = 0;i<V.size();i++)
-        {
-            cout<<V[i]<<"\n";
-        }
-    }
+	trie<double> t;
+	int i;
+	int k;
+	//cin >> k;
+	for (i = 1; i<100000; i++)
+	{
+		t.insert(toString(i), i);
+	}
+	//cin >> k;
+	for (i = 1; i<100000; i++)
+	{
+		t.remove(toString(i));
+	}
+	//cin >> k;
 }
 int main()
 {
-    simulate();
-    cout<<"okay\n";
-    return 0;
+	int t;
+	//cin >> t;
+	simulate();
+	simulate();
+	//cin >> t;
+	//_CrtDumpMemoryLeaks();
+	//cin >> t;
+	return 0;
 }

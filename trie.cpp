@@ -37,22 +37,6 @@ template<class T>class trie_node
 		ct = 0;
 		id = (T)0;
 	}
-	private:void remove(trie_node<T>*tn)
-	{
-		if (tn != NULL)
-		{
-			for (auto it : tn->M)
-				remove(it.second);
-			delete tn;
-		}
-	}
-	public:~trie_node()
-	{
-		/*for (auto it:M)
-		{
-			remove(it.second);
-		}*/
-	}
 };
 template<class T>class trie
 {
