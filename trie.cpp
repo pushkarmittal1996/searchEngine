@@ -1,14 +1,10 @@
 #pragma once
-
+#include <utility>
 #include <iostream>
+#include <algorithm>
 #include <iterator>
 #include <map>
 #include <vector>
-#include <set>
-#include <queue>
-#include <deque>
-#include <stack>
-#include <algorithm>
 #include <string>
 #include <sstream>
 #ifndef trie_cpp
@@ -22,7 +18,7 @@ void error(int id = -1, std::string g = "")
 
 template<class T>class trie_node
 {
-	public:std::map<char, trie_node<T>* >M;
+	public:std::vector<std::pair<char, trie_node<T>* > >M;
 	T id;
 	int ct;
 	public:trie_node(T i)
@@ -37,117 +33,179 @@ template<class T>class trie_node
 		ct = 0;
 		id = (T)0;
 	}
+	public:void remove(char c)
+	{
+		int low = 0;
+		int high = M.size() - 1;
+		int mid;
+		while (low <= high)
+		{
+			mid = low + ((high - low) / 2);
+			if (M[mid].first == c)
+				break;
+			else if (M[mid].first < c)
+				low = mid + 1;
+			else
+				high = mid - 1;
+		}
+		if (mid < 0 || mid >= M.size())
+			return;
+		if (M[mid].first == c)
+		{
+			delete M[mid].second;
+			for (int i = mid; i < M.size()-1; i++)
+				M[i] = M[i+1];
+			M.pop_back();
+		}
+	}
+	public:	trie_node <T> * insert(char c)
+	{
+		if (M.size() == 0)
+		{
+			M.push_back(make_pair(c,new trie_node <T> ()));
+			return M[0].second;
+		}
+		int low = 0;
+		int high = M.size() - 1;
+		int mid;
+		while (low <= high)
+		{
+			mid = low + ((high - low) / 2);
+			if (M[mid].first == c)
+				return M[mid].second;
+			else if (M[mid].first < c)
+				low = mid + 1;
+			else
+				high = mid - 1;
+		}
+		std::pair<char, trie_node<T> * >P;
+		P.first = c;
+		P.second = new trie_node<T>();
+		if (M[mid].first > c)
+			mid--;
+		M.push_back(P);
+		if (mid == M.size() - 2)
+		{
+			return M[M.size() - 1].second;
+		}
+		for (int i = M.size() - 1; i > mid+1; i--)
+			M[i] = M[i - 1];
+		M[mid+1] = P;
+		return M[mid+1].second;
+	}
+	public: trie_node <T> * search(char c)
+	{
+		int low = 0;
+		int high = M.size()-1;
+		int mid;
+		while (low <= high)
+		{
+			mid = low + ((high - low) / 2);
+			if (M[mid].first == c)
+				return M[mid].second;
+			else if (M[mid].first < c)
+				low = mid + 1;
+			else
+				high = mid - 1;
+		}
+		return NULL;
+	}
 };
 template<class T>class trie
 {
-private:trie_node<T> * m;
-public:trie()
-{
-	m = new trie_node<T>();
-}
-private:void Insert(std::string &g, T id, int i, std::map<char, trie_node<T>* > &M)
-{
-	if (i == g.size() - 1)
+	private: trie_node<T> * m;
+	public:trie()
 	{
-		if (M.find(g[i]) != M.end())
+		m = new trie_node<T>();
+	}
+	private:void Insert(std::string &g, T id, int i, trie_node<T> * M)
+	{
+		if (m == NULL)return;
+		trie_node <T>* tn = M->insert(g[i]);
+		tn->ct++;
+		if (i == g.size() - 1)
 		{
-			trie_node <T>* tn = M[g[i]];
-			if (tn->id != id&& tn->id != (T)0)
-				error(-1, "Name Already used");
-			else
+			if(tn->id == (T)0)
 				tn->id = id;
 		}
 		else
-			M[g[i]] = new trie_node<T>(id);
-		return;
+			Insert(g, id, i + 1, tn);
 	}
-	if (M.find(g[i]) == M.end())
-		M[g[i]] = new trie_node<T>();
-	trie_node <T>* tn = M[g[i]];
-	tn->ct++;
-	Insert(g, id, i + 1, tn->M);
-}
-public:void insert(std::string g, T id)
-{
-	Insert(g, id, 0, m->M);
-}
-private:T Search(std::string &g, int i, std::map<char, trie_node<T>* > &M)
-{
-	if (M.find(g[i]) == M.end())
-		return (T)0;
-	if (i == g.size() - 1)
-		return M[g[i]]->id;
-	return Search(g, i + 1, M[g[i]]->M);
-}
-public:T search(std::string g)
-{
-	return Search(g, 0, m->M);
-}
-private:void Remove(std::string &g, int i, std::map<char, trie_node<T>* > &M)
-{
-	if (M.find(g[i]) == M.end() || i >= g.size())
-		return;
-	trie_node <T>* tn = M[g[i]];
-	tn->ct--;
-	Remove(g, i + 1, tn->M);
-	if (tn->ct == 0)
+	public:void insert(std::string g, T id)
 	{
-		delete tn;
-		M.erase(g[i]);
+		m->ct++;
+		Insert(g, id, 0, m);
 	}
-}
-public:void remove(std::string g)
-{
-	Remove(g, 0, m->M);
-}
-private:void removeall(trie_node<T> *m)
-{
-	if (m == NULL)return;
-	typename std::map<char, trie_node<T>* > ::iterator it;
-	for (it = m->M.begin(); it != m->M.end(); it++)
+	private:T Search(std::string &g, int i, trie_node<T>* M)
 	{
-		removeall((*it).second);
+		if (m == NULL)return (T)0;
+		trie_node<T> * tn = M->search(g[i]);
+		if (tn == NULL)
+			return (T)0;
+		if (i == g.size() - 1)
+			return	tn->id;
+		return Search(g, i + 1, tn);
 	}
-	delete m;
-}
-private:void Peek(std::string &g, int i, trie_node<T>* m, std::vector<T>&V)
-{
-	V.push_back(m->id);
-	typename std::map<char, trie_node<T>* > ::iterator it;
-	for (it = m->M.begin(); it != m->M.end(); it++)
+	public:T search(std::string g)
 	{
-		if ((*it).second != NULL)
+		return Search(g, 0, m);
+	}
+	private:void Remove(std::string &g, int i, trie_node<T>* M)
+	{
+		if (m == NULL)return;
+		trie_node <T>* tn = M->search(g[i]);
+		if (tn == NULL || i >= g.size())
+			return;
+		tn->ct--;
+		Remove(g, i + 1, tn);
+		if (tn->ct == 0)
 		{
-			Peek(g, i + 1, (*it).second, V);
+			M->remove(g[i]);
 		}
 	}
-}
-public: std::vector<T> peek(std::string g)
-{
-	std::vector<T>V;
-	trie_node <T> *M;
-	M = m;
-	bool b = 1;
-	for (int i = 0; i<g.size(); i++)
+	public:void remove(std::string g)
 	{
-		if (M->M.find(g[i]) != M->M.end())
+		Remove(g, 0, m);
+	}
+	private:void removeall(trie_node<T> *m)
+	{
+		if (m == NULL)return;
+		for (auto i : m->M)
+			removeall(i.second);
+		delete m;
+	}
+	private:void Peek(trie_node<T>* m, std::vector<T>&V)
+	{
+		if (m == NULL)return;
+		V.push_back(m->id);
+		for (auto i : m->M)
 		{
-			M = M->M[g[i]];
-		}
-		else
-		{
-			b = 0;
-			break;
+			Peek(i.second, V);
 		}
 	}
-	if (b == true)
-		Peek(g, 0, M, V);
-	return V;
-}
-public:~trie()
-{
-	removeall(m);
-}
+	public: std::vector<T> peek(std::string g)
+	{
+		std::vector<T>V;
+		trie_node <T> *M;
+		M = m;
+		int i;
+		for (i = 0; i<g.size()-1 && M != NULL; i++)
+		{
+			//cout << M->id <<" "<<M->ct<<" "<<M->M.size()<<"\n";
+			//for (int j = 0; j < M->M.size(); j++)
+			//	cout << M->M[j].first << " ";
+			//cout << "\n";
+			M = M->search(g[i]);
+		}
+		cout << M->id << "\n";
+		if (i == g.size())
+			Peek( M, V);
+		return V;
+	}
+	public:~trie()
+	{
+		removeall(m);
+	}
 };
 #endif
 
