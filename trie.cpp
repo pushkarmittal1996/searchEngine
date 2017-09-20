@@ -1,9 +1,7 @@
 #pragma once
 #include <utility>
 #include <iostream>
-#include <algorithm>
 #include <iterator>
-#include <map>
 #include <vector>
 #include <string>
 #include <sstream>
@@ -62,7 +60,10 @@ template<class T>class trie_node
 	{
 		if (M.size() == 0)
 		{
-			M.push_back(make_pair(c,new trie_node <T> ()));
+            std::pair<char,trie_node <T>* >P;
+            P.first = c;
+            P.second = new trie_node <T> ();
+			M.push_back(P);
 			return M[0].second;
 		}
 		int low = 0;
@@ -125,8 +126,7 @@ template<class T>class trie
 		tn->ct++;
 		if (i == g.size() - 1)
 		{
-			if(tn->id == (T)0)
-				tn->id = id;
+			tn->id = id;
 		}
 		else
 			Insert(g, id, i + 1, tn);
@@ -170,36 +170,27 @@ template<class T>class trie
 	private:void removeall(trie_node<T> *m)
 	{
 		if (m == NULL)return;
-		for (auto i : m->M)
-			removeall(i.second);
+		for(int i = 0;i<m->M.size();i++)
+			removeall(m->M[i].second);
 		delete m;
 	}
 	private:void Peek(trie_node<T>* m, std::vector<T>&V)
 	{
 		if (m == NULL)return;
 		V.push_back(m->id);
-		for (auto i : m->M)
-		{
-			Peek(i.second, V);
-		}
+		for (int i = 0; i<m->M.size(); i++)
+			Peek(m->M[i].second,V);
 	}
 	public: std::vector<T> peek(std::string g)
 	{
 		std::vector<T>V;
 		trie_node <T> *M;
 		M = m;
-		int i;
-		for (i = 0; i<g.size()-1 && M != NULL; i++)
+		for (int i = 0; i<g.size()&& M!=NULL; i++)
 		{
-			//cout << M->id <<" "<<M->ct<<" "<<M->M.size()<<"\n";
-			//for (int j = 0; j < M->M.size(); j++)
-			//	cout << M->M[j].first << " ";
-			//cout << "\n";
 			M = M->search(g[i]);
 		}
-		cout << M->id << "\n";
-		if (i == g.size())
-			Peek( M, V);
+		Peek( M, V);
 		return V;
 	}
 	public:~trie()

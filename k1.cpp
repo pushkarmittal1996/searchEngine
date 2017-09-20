@@ -1,7 +1,7 @@
 // mach1.cpp : Defines the entry point for the console application.
 //
-#include "stdafx.h"
-#include "trie.h"
+#include <map>
+#include "trie.cpp"
 using namespace std;
 template <typename T>string toString(T a)
 {
@@ -11,31 +11,27 @@ template <typename T>string toString(T a)
 	ss >> g;
 	return g;
 }
-void simulate1()//3:38 min 3.371GB
+void simulate1()//3:06 min 3.371GB
 {
 	trie<double> t;
 	int i;
 	int y;
-	for (i = 1; i < 50000; i++)t.insert(toString(i), i);
-	for (i = 1; i < 50000; i++)t.search(toString(i));
-	for (i = 1; i < 50000; i++)t.remove(toString(i));
-	cout << "yo1\n";
-	cout << t.search("1234")<<endl;
-	vector<double>V = t.peek("123");
-	for (i = 0; i < V.size(); i++)cout << V[i] << "\n";
-	cout << "yo2\n";
-	cin >> y;
+	for (i = 1; i < 10000000; i++)t.insert(toString(i), i);
+	for (i = 1; i < 10000000; i++)t.search(toString(i));
+	for (i = 1; i < 10000000; i++)t.remove(toString(i));
+
 }
 void simulate2()//3:48 min 3.829GB
 {
 	int i;
 	map<string, double>t;
-	for (i = 1; i < 50000000; i++)t[toString(i)] = i;
-	for (i = 1; i < 50000000; i++)t[toString(i)];
-	for (i = 1; i < 50000000; i++)t.erase(toString(i));
+	for (i = 1; i < 10000000; i++)t[toString(i)] = i;
+	for (i = 1; i < 10000000; i++)t[toString(i)];
+	for (i = 1; i < 10000000; i++)t.erase(toString(i));
 }
 int main()
 {
-	simulate1();
+	//simulate1();
+	simulate2();
 	return 0;
 }
