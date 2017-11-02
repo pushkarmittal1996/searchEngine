@@ -4,23 +4,23 @@ struct SET
 	SET * root;
 	long long rank;
 };
-class cluster
+class disjoint_set
 {
-	public:
+	private:
 	std::vector < SET * >V;
-	cluster(long long n)
+	public:
+	disjoint_set(long long n)
 	{
 		V.clear();
 		V.resize(n);
 		for(long long i = 0;i<n;i++)
-        {
-            V[i] = new SET();
-            V[i]->root = V[i];
-            V[i]->rank = 1;
-        }
-			
+		{
+		    V[i] = new SET();
+		    V[i]->root = V[i];
+		    V[i]->rank = 1;
+		}	
 	}
-    ~cluster()
+    ~disjoint_set()
     {
         for(long long i = 0;i<V.size();i++)
         {
@@ -74,7 +74,7 @@ int main()
 	//kruskal's algorithm
 	int n,m;
     cin>>n>>m;
-    cluster c(n);
+    disjoint_set c(n);
     vector<pair<int,pair<int,int> > >E(m);
     for(int i= 0;i<m;i++)
     {
