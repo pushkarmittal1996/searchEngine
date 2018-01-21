@@ -1,22 +1,9 @@
+#pragma once
 #include<dirent.h>
 #include<iostream>
 #include<fstream>
-using namespace std;
-static void filePrint(string str)
-{	
-	ifstream fs(str.c_str());
-	if(!fs.is_open())
-		return ;
-	cout<<"-----file:"<<str<<"\n";
-	while(!fs.eof())
-	{
-		string g;
-		getline(fs,g);
-		cout<<str<<" "<<g<<endl;
-	}
-	fs.close();
-}
-void listAllFiles(string str,void (*fileParse)(string))
+#ifndef osf_cpp
+void listAllFiles(std::string str,void (*fileParse)(std::string))
 {
 	DIR * dir;
 	struct dirent *ent;
@@ -24,10 +11,10 @@ void listAllFiles(string str,void (*fileParse)(string))
 	{
 		while((ent = readdir(dir)) != NULL)
 		{
-			string r(ent->d_name);
+			std::string r(ent->d_name);
 			if(r.size()>0 && r[0] == '.')
 				continue;
-			listAllFiles(str + "/" + string(ent->d_name),fileParse);
+			listAllFiles(str + "/" + std::string(ent->d_name),fileParse);
 		}
 		closedir(dir);
 	}
@@ -36,6 +23,9 @@ void listAllFiles(string str,void (*fileParse)(string))
 		(*fileParse)(str);
 	}
 }
+#endif
+/*
+usage example
 int main()
 {
 	string str;
@@ -43,3 +33,4 @@ int main()
 	listAllFiles(str,filePrint);
 	return 0;
 }
+*/
