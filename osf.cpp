@@ -2,7 +2,27 @@
 #include<dirent.h>
 #include<string>
 #include<omp.h>
+#include"./stemLib/stemming/english_stem.h"
 #ifndef osf_cpp
+stemming::english_stem<> __stemEng;
+std::wstring StringToWString(const std::string& s)
+{
+	std::wstring temp(s.length(),L' ');
+	std::copy(s.begin(), s.end(), temp.begin());
+	return temp; 
+}
+std::string WStringToString(const std::wstring& s)
+{
+	std::string temp(s.length(), ' ');
+	std::copy(s.begin(), s.end(), temp.begin());
+	return temp; 
+}
+std::string StemEnglish(const std::string& s)
+{
+	std::wstring w(StringToWString(s));
+	__stemEng(w);
+	return WStringToString(w);
+}
 void listAllFiles(std::string str,void (*fileParse)(std::string&))
 {
 	DIR * dir;
