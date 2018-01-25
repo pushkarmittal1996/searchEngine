@@ -1,9 +1,9 @@
 #pragma once
 #include<dirent.h>
-#include<iostream>
-#include<fstream>
+#include<string>
+#include<omp.h>
 #ifndef osf_cpp
-void listAllFiles(std::string str,void (*fileParse)(std::string))
+void listAllFiles(std::string str,void (*fileParse)(std::string&))
 {
 	DIR * dir;
 	struct dirent *ent;
@@ -23,14 +23,24 @@ void listAllFiles(std::string str,void (*fileParse)(std::string))
 		(*fileParse)(str);
 	}
 }
-#endif
-/*
-usage example
-int main()
+void replaceString(std::string &g,const std::string &S,const char C)
 {
-	string str;
-	str = "/gitrepo";
-	listAllFiles(str,filePrint);
-	return 0;
+	register char c = C;
+	register char * G = (char*)g.c_str();
+	unsigned register long long i,r,B1=0,B2=0,sl=S.size(),gl=g.size();
+	for(i = 0;i<sl;i++)
+	{
+		r = (int)S[i];
+		B1 |= r < 64? 1<<r : 0;
+		B2 |= r > 63? 1<<(r-64) : 0;
+	}
+	#pragma omp parallel for private(i,r) firstprivate(gl,c,B1,B2) shared(G)
+	for(i = 0;i<gl;i++)
+	{
+		r = (int)G[i];
+		G[i] = r < 64 ?
+			(B1 & 1<<r ? c : r):
+			(B2 & 1<<(r-64) ? c : r);
+	}
 }
-*/
+#endif

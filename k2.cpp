@@ -1,5 +1,7 @@
 #include "osf.cpp"
-void filePrint(std::string str)
+#include<iostream>
+#include<fstream>
+void filePrint(std::string& str)
 {	
 	std::ifstream fs(str.c_str());
 	if(!fs.is_open())
@@ -19,6 +21,9 @@ int main()
 	string str;
 	str = "/gitrepo";
 	listAllFiles(str,filePrint);
+	string g = "my*name$%^&is<>?,./gaurav";
+	replaceString(g,"!@#$%^&*()_+-={}|[]\\:\"';:<>?,./",'_');
+	cout<<"\n\n"<<g<<"\n\n";
 	return 0;
 }
 
