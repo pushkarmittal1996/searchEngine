@@ -9,13 +9,13 @@ std::wstring StringToWString(const std::string& s)
 {
 	std::wstring temp(s.length(),L' ');
 	std::copy(s.begin(), s.end(), temp.begin());
-	return temp; 
+	return temp;
 }
 std::string WStringToString(const std::wstring& s)
 {
 	std::string temp(s.length(), ' ');
 	std::copy(s.begin(), s.end(), temp.begin());
-	return temp; 
+	return temp;
 }
 std::string StemEnglish(const std::string& s)
 {
@@ -43,8 +43,9 @@ void listAllFiles(std::string str,void (*fileParse)(std::string&))
 		(*fileParse)(str);
 	}
 }
-void replaceString(std::string &g,const std::string &S,const char C)
+void replaceString(std::string &g,std::string S,const char C)
 {
+    if(S == "") S = "!@#$%^&*()_+-={}|[]\\:\"';:<>?,./";
 	register char c = C;
 	register char * G = (char*)g.c_str();
 	unsigned register long long i,r,B1=0,B2=0,sl=S.size(),gl=g.size();
@@ -58,9 +59,11 @@ void replaceString(std::string &g,const std::string &S,const char C)
 	for(i = 0;i<gl;i++)
 	{
 		r = (int)G[i];
+		r = (r >= 'A' && r <= 'Z')?r + 'a' - 'A':r;
 		G[i] = r < 64 ?
 			(B1 & 1<<r ? c : r):
 			(B2 & 1<<(r-64) ? c : r);
 	}
 }
 #endif
+
